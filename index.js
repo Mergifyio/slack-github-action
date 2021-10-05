@@ -1,7 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const { WebClient } = require('@slack/web-api');
-const flatten = require('flat');
 const axios = require('axios');
 
 try {
@@ -44,16 +43,7 @@ try {
             }
         }
 
-        // flatten JSON payload (no nested attributes)
-        const flatPayload = flatten(payload);
-
-        // workflow builder requires values to be strings
-        // iterate over every value and convert it to string
-        Object.keys(flatPayload).forEach((key) => {
-            flatPayload[key] = '' + flatPayload[key];
-        })
-
-        axios.post(webhookUrl, flatPayload).then(response => {
+        axios.post(webhookUrl, payload).then(response => {
             // Successful post!
         }).catch(err => {
             console.log("axios post failed, double check the payload being sent includes the keys Slack expects")
